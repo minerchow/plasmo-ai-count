@@ -5,12 +5,17 @@ export const config: PlasmoCSConfig = {
 }
 
 window.addEventListener("load", () => {
-  console.log("content script loaded")
+  console.log("content script loaded");
 
-  chrome.storage.local.get(['count', 'initialCount'], (result) => {
-    const initialValue = result.initialCount || 0;
-    updateCountDisplay(result.count !== undefined ? result.count : initialValue);
+  // 添加文本选择监听
+  document.addEventListener('selectionchange', () => {
+    const selection = window.getSelection().toString().trim();
+    console.log("selection",selection)
+    if (selection) {
+      chrome.storage.local.set({ selectedText: selection });
+    }
   });
+
   
   chrome.runtime.onMessage.addListener((message) => {
     if (message.type === 'COUNT_UPDATE') {
@@ -31,7 +36,7 @@ window.addEventListener("load", () => {
     countDiv.style.padding = '10px';
     countDiv.style.background = 'rgba(0,0,0,0.7)';
     countDiv.style.color = 'white';
-    countDiv.textContent = `当前计数: ${count}`;
+    countDiv.textContent = `当前计数1: ${count}`;
     document.body.appendChild(countDiv);
   }
 })
